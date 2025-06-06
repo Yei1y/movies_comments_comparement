@@ -28,7 +28,7 @@ class DoubanTextCleaner:
     
     def clean_text(self, text):
         """
-        全面的文本清洗
+        文本清洗
         :param text: 输入文本
         :return: 清洗后的文本
         """
@@ -56,6 +56,8 @@ class DoubanTextCleaner:
         for pattern in patterns:
             text = re.sub(pattern, '', text)
             
+        # 去除所有多余空格（包括连续空格）
+        text = re.sub(r'\s+', ' ', text)
         return text.strip()
     
     def segment_text(self, text):

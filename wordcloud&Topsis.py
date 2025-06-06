@@ -9,7 +9,7 @@ from collections import Counter
 import numpy as np
 import os
 
-# 设置中文字体（需确保simhei.ttf在目录中）
+# 设置中文字体
 plt.rcParams['font.sans-serif'] = ['SimHei']
 plt.rcParams['axes.unicode_minus'] = False
 
@@ -67,6 +67,27 @@ class EnhancedVisualizer:
         pyLDAvis.save_html(vis, html_path)
         os.system(f"start {html_path}")  # Windows系统自动打开
         return vis
+
+    @staticmethod
+    def plot_topic_words(lda_model, num_topics=3, num_words=10):
+        """绘制每个主题的前N个高频词柱形图"""
+        topics = lda_model.show_topics(num_topics=num_topics, num_words=num_words, formatted=False)
+        
+        plt.figure(figsize=(12, 8))
+        for topic_id, topic_words in topics:
+            # 提取词和权重
+            words = [word for word, _ in topic_words]
+            weights = [weight for _, weight in topic_words]
+            
+            # 绘制柱形图
+            plt.subplot(num_topics, 1, topic_id+1)
+            sns.barplot(x=weights, y=words, palette="rocket")
+            plt.title(f"主题 #{topic_id+1} 高频词TOP{num_words}", fontsize=12)
+            plt.xlabel("权重")
+            plt.ylabel("词语")
+        
+        plt.tight_layout()
+        plt.show()
 
 # =========== 主题建模模块 ===========
 class TopicModeler:
@@ -148,13 +169,10 @@ def main():
     # 主题模型可视化
     print("\n生成主题模型可视化(浏览器自动打开)...")
     EnhancedVisualizer.visualize_lda(lda, corpus, dictionary)
+    
+    # 新增主题词柱形图可视化
+    print("\n生成主题高频词柱形图...")
+    EnhancedVisualizer.plot_topic_words(lda)
 
 if __name__ == "__main__":
-    # 检查必备库
-    try:
-        import pyLDAvis
-    except ImportError:
-        print("请先安装pyLDAvis: pip install pyLDAvis")
-        exit()
-    
     main()
