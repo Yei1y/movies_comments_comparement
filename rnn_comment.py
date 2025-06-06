@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout
+from tensorflow.keras.layers import Embedding, SimpleRNN, Dense, Dropout
 from tensorflow.keras.utils import to_categorical
 
 def load_and_preprocess_data(input_csv, comment_col='Comment', type_col='Type'):
@@ -39,11 +39,11 @@ def prepare_datasets(comments, types):
     
     return X_train, y_train, X_predict, predict_mask
 
-def build_lstm_model(vocab_size=5000, max_len=200):
-    """构建LSTM模型"""
+def build_rnn_model(vocab_size=5000, max_len=100):
+    """构建RNN模型"""
     model = Sequential()
     model.add(Embedding(input_dim=vocab_size, output_dim=128, input_length=max_len))
-    model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
+    model.add(SimpleRNN(64, dropout=0.2))
     model.add(Dropout(0.2))
     model.add(Dense(2, activation='softmax'))
     model.compile(loss='categorical_crossentropy',
@@ -97,8 +97,8 @@ def predict_and_save(model, tokenizer, df, X_predict, predict_mask, output_csv):
     print(f"\n一般评论中好评占比: {good_ratio:.2%}")
     print(f"\n分类完成，结果已保存到{output_csv}")
 
-def run_lstm_analysis(input_csv, output_csv, metrics_img, comment_col='Comment', type_col='Type'):
-    """主函数：运行完整的LSTM分析流程"""
+def run_rnn_analysis(input_csv, output_csv, metrics_img, comment_col='Comment', type_col='Type'):
+    """主函数：运行完整的RNN分析流程"""
     # 1. 数据加载和预处理
     df, comments, types = load_and_preprocess_data(input_csv, comment_col, type_col)
     
@@ -112,7 +112,7 @@ def run_lstm_analysis(input_csv, output_csv, metrics_img, comment_col='Comment',
     X_train_pad = pad_sequences(X_train_seq, maxlen=200)
     
     # 4. 构建和训练模型
-    model = build_lstm_model()
+    model = build_rnn_model()
     history = train_and_evaluate(model, X_train_pad, y_train)
     
     # 5. 可视化训练过程
@@ -124,17 +124,16 @@ def run_lstm_analysis(input_csv, output_csv, metrics_img, comment_col='Comment',
 if __name__ == "__main__":
     # 分析复仇者联盟评论
     print("正在分析复仇者联盟评论...")
-    run_lstm_analysis(
+    run_rnn_analysis(
         input_csv='Avengers-Endgame_comments.csv',
-        output_csv='av_classified_comments.csv',
-        metrics_img='av_training_metrics.png'
+        output_csv='av_classified_comments_rnn.csv',
+        metrics_img='av_training_metrics_rnn.png'
     )
     
     # 分析雷霆特工队评论
     print("\n正在分析雷霆特工队评论...")
-    run_lstm_analysis(
+    run_rnn_analysis(
         input_csv='Thunderbolts_comments.csv',
-        output_csv='th_classified_comments.csv',
-        metrics_img='th_training_metrics.png'
+        output_csv='th_classified_comments_rnn.csv',
+        metrics_img='th_training_metrics_rnn.png'
     )
-    
