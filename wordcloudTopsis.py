@@ -113,7 +113,10 @@ class TopicModeler:
         return lda_model.print_topics(num_words=num_words)
 
 # =========== 主业务流程 ===========
-def main():
+def task1():
+    """任务1：生成复仇者联盟4和雷霆特工队的评论词云和主题建模
+    读取两部电影的评论数据，生成词云、词频分析，并进行主题建模。
+    """
     # 初始化文本处理器
     cleaner = DoubanTextCleaner()
     
@@ -175,4 +178,4 @@ def main():
     EnhancedVisualizer.plot_topic_words(lda)
 
 if __name__ == "__main__":
-    main()
+    task1()

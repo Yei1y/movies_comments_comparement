@@ -122,22 +122,18 @@ def run_lstm_analysis(input_csv, output_csv, metrics_img, comment_col='Comment',
     # 6. 预测并保存结果
     predict_and_save(model, tokenizer, df, X_predict, predict_mask, output_csv)
 
-if __name__ == "__main__":
-    seed = 42
-    np.random.seed(seed)
-#     # 分析复仇者联盟评论
-#     print("正在分析复仇者联盟评论...")
-#     run_lstm_analysis(
-#         input_csv='Avengers-Endgame_comments.csv',
-#         output_csv='av_classified_comments.csv',
-#         metrics_img='av_training_metrics.png'
-#     )
-    
-    # 分析雷霆特工队评论
-    print("\n正在分析雷霆特工队评论...")
+def task3():
+    """
+    任务3：LSTM文本分类
+    读取复联4的评论数据，进行LSTM文本分类。
+    """
+    # 分析复仇者联盟4评论
     run_lstm_analysis(
-        input_csv='Thunderbolts_comments.csv',
-        output_csv='th_classified_comments.csv',
-        metrics_img='th_training_metrics.png'
+        input_csv='Avengers-Endgame_comments.csv',
+        output_csv='av_classified_comments.csv',
+        metrics_img='av_training_metrics_test.png'
     )
-    
+
+if __name__ == "__main__":
+    task3()
+    print("LSTM文本分类任务已完成。")

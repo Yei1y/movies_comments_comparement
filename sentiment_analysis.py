@@ -52,12 +52,14 @@ def analyze_sentiment(df):
     
     return results
 
-if __name__ == "__main__":
+def task2():
+    """
+    任务2：情感分析
+    读取复仇者联盟4和雷霆特工队的评论数据，进行情感分析。
+    """
     # 读取CSV文件
     df_avengers = pd.read_csv("Avengers-Endgame_comments.csv")
     df_thunderbolts = pd.read_csv("Thunderbolts_comments.csv")
-    
-    print("开始情感分析...\n")
     
     # 分析复仇者联盟数据
     print("=== 复仇者联盟4:终局之战 ===")
@@ -74,3 +76,6 @@ if __name__ == "__main__":
     print(f"正面评论: {thunderbolts_analysis['positive']} ({thunderbolts_analysis['positive_pct']:.1f}%)")
     print(f"负面评论: {thunderbolts_analysis['negative']} ({thunderbolts_analysis['negative_pct']:.1f}%)")
     print(f"中性评论: {thunderbolts_analysis['neutral']} ({thunderbolts_analysis['neutral_pct']:.1f}%)")
+
+if __name__ == "__main__":
+    task2()

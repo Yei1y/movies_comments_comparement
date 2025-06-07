@@ -121,7 +121,11 @@ def run_rnn_analysis(input_csv, output_csv, metrics_img, comment_col='Comment', 
     # 6. 预测并保存结果
     predict_and_save(model, tokenizer, df, X_predict, predict_mask, output_csv)
 
-if __name__ == "__main__":
+def task5():
+    """
+    任务5：RNN文本分类
+    读取复联4和雷霆特工队的评论数据，进行RNN文本分类。
+    """
     # 分析复仇者联盟评论
     print("正在分析复仇者联盟评论...")
     run_rnn_analysis(
@@ -137,3 +141,7 @@ if __name__ == "__main__":
         output_csv='th_classified_comments_rnn.csv',
         metrics_img='th_training_metrics_rnn.png'
     )
+
+if __name__ == "__main__":
+    task5()
+    print("RNN文本分类任务已完成。")
