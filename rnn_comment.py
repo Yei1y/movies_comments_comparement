@@ -42,12 +42,12 @@ def prepare_datasets(comments, types):
 def build_rnn_model(vocab_size=5000, max_len=100):
     """构建RNN模型"""
     model = Sequential()
-    model.add(Embedding(input_dim=vocab_size, output_dim=128, input_length=max_len))
-    model.add(SimpleRNN(64, dropout=0.2))
-    model.add(Dropout(0.2))
+    model.add(Embedding(input_dim=vocab_size, output_dim=32, input_length=max_len))
+    model.add(SimpleRNN(8, dropout=0.5))
+    model.add(Dropout(0.5))
     model.add(Dense(2, activation='softmax'))
     model.compile(loss='categorical_crossentropy',
-                 optimizer='adam',
+                 optimizer='adamw',
                  metrics=['accuracy'])
     return model
 
@@ -109,7 +109,7 @@ def run_rnn_analysis(input_csv, output_csv, metrics_img, comment_col='Comment', 
     tokenizer = Tokenizer(num_words=5000)
     tokenizer.fit_on_texts(X_train)
     X_train_seq = tokenizer.texts_to_sequences(X_train)
-    X_train_pad = pad_sequences(X_train_seq, maxlen=200)
+    X_train_pad = pad_sequences(X_train_seq, maxlen=100)
     
     # 4. 构建和训练模型
     model = build_rnn_model()
