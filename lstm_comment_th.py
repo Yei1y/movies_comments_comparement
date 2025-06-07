@@ -42,10 +42,9 @@ def prepare_datasets(comments, types):
 def build_lstm_model(vocab_size=5000, max_len=200):
     """构建LSTM模型"""
     model = Sequential()
-    model.add(Embedding(input_dim=vocab_size, output_dim=256, input_length=max_len))
-    model.add(LSTM(8, dropout=0.2, recurrent_dropout=0.2))
-    model.add(Dense(2, activation='relu'))
-    model.add(Dropout(0.6))
+    model.add(Embedding(input_dim=vocab_size, output_dim=128, input_length=max_len))
+    model.add(LSTM(128, dropout=0.4, recurrent_dropout=0.4))
+    model.add(Dropout(0.2))
     model.add(Dense(2, activation='softmax'))
     model.compile(loss='categorical_crossentropy',
                  optimizer='adamw',
