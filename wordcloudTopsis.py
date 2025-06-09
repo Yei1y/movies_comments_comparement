@@ -54,7 +54,7 @@ class EnhancedVisualizer:
         plt.show()
     
     @staticmethod
-    def visualize_lda(lda_model, corpus, dictionary):
+    def visualize_lda(lda_model, corpus, dictionary, html_path="lda_visualization.html"):
         """主题模型可视化(pyLDAvis)"""
         vis = pyLDAvis.gensim_models.prepare(
             lda_model, 
@@ -63,7 +63,6 @@ class EnhancedVisualizer:
             sort_topics=False
         )
         # 保存为HTML文件并自动打开
-        html_path = "lda_visualization.html"
         pyLDAvis.save_html(vis, html_path)
         os.system(f"start {html_path}")  # Windows系统自动打开
         return vis
@@ -151,31 +150,42 @@ def task1():
     process_comments(data1, "复仇者联盟4")
     process_comments(data2, "雷霆特工队")
     
-    # 主题建模（合并所有数据）
+    # 主题建模
     print("\n正在进行主题建模...")
-    combined_comments = data1 + data2
-    segmented_texts = [
+    segmented_texts1 = [
         cleaner.preprocess_for_analysis(str(item['Comment']))
-        for item in combined_comments
+        for item in data1
+    ]
+    segmented_texts2 = [
+        cleaner.preprocess_for_analysis(str(item['Comment']))
+        for item in data2
     ]
     
     # 运行LDA模型
-    lda, corpus, dictionary = TopicModeler.lda_model(segmented_texts)
-    
+    lda, corpus, dictionary = TopicModeler.lda_model(segmented_texts1, num_topics=2)
+    lda2, corpus2, dictionary2 = TopicModeler.lda_model(segmented_texts2, num_topics=2)
+
     # 显示主题关键词
     topics = TopicModeler.show_topics(lda)
+    topics2 = TopicModeler.show_topics(lda2)
     print("\n主题关键词分布:")
     for idx, topic in topics:
         print(f"\n主题 #{idx+1}:")
         print(topic)
-    
+
+    for idx, topic in topics2:
+        print(f"\n主题 #{idx+1}:")
+        print(topic)
+
     # 主题模型可视化
     print("\n生成主题模型可视化(浏览器自动打开)...")
-    EnhancedVisualizer.visualize_lda(lda, corpus, dictionary)
-    
-    # 新增主题词柱形图可视化
+    EnhancedVisualizer.visualize_lda(lda, corpus, dictionary, "lda_visualization_avengers.html")
+    EnhancedVisualizer.visualize_lda(lda2, corpus2, dictionary2, "lda_visualization_thunderbolts.html")
+
+    # 主题词柱形图可视化
     print("\n生成主题高频词柱形图...")
     EnhancedVisualizer.plot_topic_words(lda)
+    EnhancedVisualizer.plot_topic_words(lda2)
 
 if __name__ == "__main__":
     task1()
