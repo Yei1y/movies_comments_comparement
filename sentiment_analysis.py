@@ -14,8 +14,11 @@ def analyze_sentiment(df):
         'total': 0
     }
     
+    # 创建DataFrame存储详细结果
+    detailed_results = []
+    
     # 分析每条评论
-    for comment in df['Comment'].dropna():
+    for idx, comment in df['Comment'].dropna().items():
         try:
             # 预处理文本
             processed = cleaner.preprocess_for_analysis(comment)
@@ -29,13 +32,25 @@ def analyze_sentiment(df):
             sentiment = s.sentiments
             
             # 分类情感
+            sentiment_label = ''
             if sentiment > 0.6:
                 results['positive'] += 1
+                sentiment_label = 'positive'
             elif sentiment < 0.4:
                 results['negative'] += 1
+                sentiment_label = 'negative'
             else:
                 results['neutral'] += 1
+                sentiment_label = 'neutral'
             results['total'] += 1
+            
+            # 保存详细结果
+            detailed_results.append({
+                'comment_id': idx,
+                'comment': comment,
+                'sentiment_score': sentiment,
+                'sentiment_label': sentiment_label
+            })
             
         except Exception as e:
             print(f"分析评论时出错: {comment[:50]}... 错误: {str(e)}")
@@ -50,7 +65,7 @@ def analyze_sentiment(df):
         results['negative_pct'] = 0
         results['neutral_pct'] = 0
     
-    return results
+    return results, pd.DataFrame(detailed_results)
 
 def task2():
     """
@@ -63,19 +78,25 @@ def task2():
     
     # 分析复仇者联盟数据
     print("=== 复仇者联盟4:终局之战 ===")
-    avengers_analysis = analyze_sentiment(df_avengers)
+    avengers_analysis, avengers_details = analyze_sentiment(df_avengers)
     print(f"总评论数: {avengers_analysis['total']}")
     print(f"正面评论: {avengers_analysis['positive']} ({avengers_analysis['positive_pct']:.1f}%)")
     print(f"负面评论: {avengers_analysis['negative']} ({avengers_analysis['negative_pct']:.1f}%)")
     print(f"中性评论: {avengers_analysis['neutral']} ({avengers_analysis['neutral_pct']:.1f}%)")
     
+    # 保存详细结果到CSV
+    avengers_details.to_csv("avengers_sentiment_results.csv", index=False, encoding='utf-8-sig', index_label=False)
+    
     # 分析雷霆特工队数据
     print("\n=== 雷霆特工队 ===")
-    thunderbolts_analysis = analyze_sentiment(df_thunderbolts)
+    thunderbolts_analysis, thunderbolts_details = analyze_sentiment(df_thunderbolts)
     print(f"总评论数: {thunderbolts_analysis['total']}")
     print(f"正面评论: {thunderbolts_analysis['positive']} ({thunderbolts_analysis['positive_pct']:.1f}%)")
     print(f"负面评论: {thunderbolts_analysis['negative']} ({thunderbolts_analysis['negative_pct']:.1f}%)")
     print(f"中性评论: {thunderbolts_analysis['neutral']} ({thunderbolts_analysis['neutral_pct']:.1f}%)")
+    
+    # 保存详细结果到CSV
+    thunderbolts_details.to_csv("thunderbolts_sentiment_results.csv", index=False, encoding='utf-8-sig', index_label=False)
 
 if __name__ == "__main__":
     task2()

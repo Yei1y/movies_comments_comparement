@@ -1,6 +1,7 @@
 import jieba
 import re
 from collections import Counter
+import pandas as pd
 
 class DoubanTextCleaner:
     def __init__(self):
@@ -82,7 +83,9 @@ class DoubanTextCleaner:
         """
         if type_filter and isinstance(texts[0], dict):
             texts = [t for t in texts if t.get('Type') == type_filter]
-            
+        texts = pd.DataFrame(texts).drop_duplicates(subset=['Comment'])
+        texts = texts.dropna(subset=['Comment'])
+        texts = texts['Comment'].tolist()
         all_words = []
         for text in texts:
             if isinstance(text, dict):
