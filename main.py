@@ -1,46 +1,45 @@
-import os
-from data_handling import DoubanTextCleaner
-from wordcloudTopsis import task1 as wordcloud_task
-from sentiment_analysis import task2 as sentiment_task
-from lstm_comment_av import task3 as lstm_av_task
-from lstm_comment_th import task4 as lstm_th_task
-from rnn_comment import task5 as rnn_task
+# -*- coding: utf-8 -*-
+"""一键运行影评比较分析的完整流程。
+
+依次执行三个任务：
+    任务一  词云、高频词与 LDA 主题建模
+    任务二  SnowNLP 情感极性分析
+    任务三  四个分类模型的对比（LSTM / SVM / 朴素贝叶斯 / 逻辑回归）
+
+全部产物写入 output/（图表在 output/figures/，数值表在 output/tables/）。
+注意：任务三的 LSTM 需要 5 折 × 50 epoch 训练，单部影片在普通 CPU 上约需
+30–45 分钟；若只想快速复现其余结果，可直接运行
+``python scripts/model_comparison.py av`` 或单独执行前两个脚本。
+"""
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / 'scripts'))   # 让脚本目录内的模块可被导入
+
+from model_comparison import task3 as model_task          # noqa: E402
+from sentiment_snownlp import task2 as sentiment_task     # noqa: E402
+from wordcloud_lda import task1 as wordcloud_task         # noqa: E402
+
 
 def main():
-    """主程序：整合所有分析模块"""
+    """整合所有分析模块。"""
     print("=== 影评分析系统 ===")
-    
-    # 1. 初始化文本处理器
-    print("\n初始化文本处理器...")
-    cleaner = DoubanTextCleaner()
-    
-    # 2. 词云和主题分析
+
     print("\n=== 开始词云和主题分析 ===")
     wordcloud_task()
-    
-    # 3. 情感分析
+
     print("\n=== 开始情感分析 ===")
     sentiment_task()
-    
-    # 4. LSTM分类
-    print("\n=== 开始LSTM分类 ===")
-    print("\n分析复仇者联盟评论...")
-    lstm_av_task()
-    print("\n分析雷霆特工队评论...")
-    lstm_th_task()
-    
-    # 5. RNN分类
-    print("\n=== 开始RNN分类 ===")
-    rnn_task()
-    
+
+    print("\n=== 开始四模型对比 ===")
+    model_task()
+
     print("\n=== 所有分析任务已完成 ===")
-    print("结果文件已保存在当前目录:")
-    print("- av_classified_comments.csv: 复仇者联盟LSTM分类结果")
-    print("- th_classified_comments.csv: 雷霆特工队LSTM分类结果")
-    print("- av_classified_comments_rnn.csv: 复仇者联盟RNN分类结果")
-    print("- th_classified_comments_rnn.csv: 雷霆特工队RNN分类结果")
-    print("- lda_visualization.html: 主题模型可视化")
-    print("- *.png: 各种分析图表")
+    print("结果文件已保存在 output/ 目录:")
+    print("- output/figures/: 词云、高频词、主题图、训练曲线、模型对比图、pyLDAvis 交互页")
+    print("- output/tables/ : 情感分析明细与汇总、各模型逐条预测结果与指标汇总")
+
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,3 @@
+﻿movie,total_valid,skipped,positive,negative,neutral,positive_pct,negative_pct,neutral_pct,mean_score,median_score
+复仇者联盟4,1164,36,885,194,85,76.03,16.67,7.3,0.7863,0.9891
+雷霆特工队,1168,32,869,204,95,74.4,17.47,8.13,0.7708,0.9703
